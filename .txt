@@ -1,0 +1,46 @@
+
+Api security:
+ Cors:
+ - if access control allow origin is set to * , any melicious transactions can happene
+ - if specified, only the site specified to will access this endpoint for a transactions
+ - when ur users visites ur site and there is a bas element within that site, that is pointing them to a melicious server, 
+   if you dont set the cross origin rescourse policy then the browser will allow this
+ - if the policy is set to your site then the melicious site will not be reach
+ - for an express application using the helment lib will be more secure
+
+ Error Disclosure:
+   - Erroring out is necessary
+   - intentional error handling is good
+   - developers and customers are separate error message audiences
+ Server Information Leaks:
+  - is somethinsg thst randomly advertise your web by defaults to ranfom,
+    individuals or ur customers
+
+    solutions : 
+      - remve headers
+
+ Insecure Cookies:
+   - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
