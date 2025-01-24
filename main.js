@@ -50,13 +50,7 @@ function Solve(number, stringArr) {
 			return 1 + memo[indexs];
 		} else {
 			const option1 = LongestSubString(string1, string2, idx1 + 1, idx2, memo);
-			const option2 = LongestSubString(
-				string1,
-				string2,
-				idx1,
-				idx2 + 1,
-				memo
-			);
+			const option2 = LongestSubString(string1, string2, idx1, idx2 + 1, memo);
 			memo[indexs] = Math.max(option1, option2);
 			return memo[indexs];
 		}
@@ -113,4 +107,78 @@ const string_values = [
 ];
 const someNums = 3662277;
 const response = Solve(someNums, string_values);
-console.log(response);
+
+class Node {
+	constructor(node) {
+		this.node = node;
+		this.left = null;
+		this.right = null;
+	}
+}
+
+class BST {
+	constructor() {
+		this.root = null;
+	}
+
+	search(node) {
+		if (!this.root) {
+			return false;
+		}
+
+		let temp = this.root;
+		while (temp) {
+			if (node < temp.node) {
+				temp = temp.left;
+			} else {
+				temp = temp.right;
+			}
+			if (temp.node === null) {
+				return false;
+			}
+			if (node == temp.node) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	insert(node) {
+		let new_node = new Node(node);
+		if (this.root === null) {
+			this.root = new_node;
+			return this;
+		}
+		let temp_node = this.root;
+		while (true) {
+			if (new_node.node === temp_node.node) {
+				return undefined;
+			}
+			if (new_node.node < temp_node.node) {
+				if (temp_node.left === null) {
+					temp_node.left = new_node;
+					return this;
+				} else {
+					temp_node = temp_node.left;
+				}
+			} else {
+				if (temp_node.right === null) {
+					temp_node.right = new_node;
+					return this;
+				} else {
+					temp_node = temp_node.right;
+				}
+			}
+		}
+	}
+}
+
+const tree = new BST();
+tree.insert(5);
+tree.insert(8);
+tree.insert(3);
+tree.insert(1);
+tree.insert(9);
+tree.insert(7);
+console.log(tree.search(7));
+console.log(tree);

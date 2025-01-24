@@ -36,7 +36,7 @@ async def GetCookie(request:Request):
         return cookie
     except Exception as error:
         print(error)
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorised user")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=" invalid token")
     
     
 def get_current_user(token:str=Depends(GetCookie), db:Session=Depends(get_db)):
