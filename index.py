@@ -248,7 +248,7 @@ print(response)
 
 backtracking template
 
-"""
+
 
 
  
@@ -379,3 +379,192 @@ print("Nums operation",min_stesp("name", "jane"))
 
 
 
+def count_pre(arr, target_pref):
+    count = 0
+    
+    for word in arr:
+        for i in range(len(word)):
+            for j in range(i, len(word) + 1):
+                if j <= len(word)//2 and i <= len(word):
+                    if word[i:j] == target_pref:
+                        count += 1
+    
+    return count
+
+m = ["lewsmb","lewrydnve","lewqqm","lewec","lewn","lewb","lewedb"]
+print(count_pre(m, "lew"))
+
+
+def dynamics(arr, target):
+    count = 0
+    for word in arr:
+        if word.index(target) == 0:
+            count += 1
+    return count 
+
+
+m = ["lewsmb","lewrydnve","lewqqm","lewec","lewn","lewb","lewedb"]
+print(dynamics(m, "lew"))
+            
+
+def see(arr1, arr2):
+    result = []
+    modify_arr2 = ["".join(arr2)]
+    print(modify_arr2)
+    for word1 in arr1:
+        for word2 in ["".join(arr2)]:
+            if word2 in word1:
+                result.append(word1)
+    return result
+
+words1 = ["amazon","apple","facebook","google","leetcode"]
+words2 = ["e","o"]
+see(words1, words2)
+
+modify_arr2 = ["".join(words2)]
+
+
+def StringSubs(string, target):
+    
+    i, j = 0, 0
+    s = 0
+    n = len(string)
+    
+    while i < n and j < n + 1:
+        if s == len(target):
+            if string[i:j] == target:
+                return string[i:j]
+            return string[i:j]
+        if s < len(target):
+            if j < n:
+                s += j
+            j += 1
+        if s > len(target):
+            s -= i
+            i += 1
+print(StringSubs("example", "xam"))
+"""
+
+
+
+"""
+travers in the grid using the following ways (row - 1, col + 1) (row, col + 1) and (row + 1, col + 1)
+ - initial a counter
+ - increament the counter by one for every valid movement in the grid
+ - bounce check
+ - if no vailid movement return 0
+ - if out of bounce return 
+
+
+up elements:
+if i > 0 and i < rows -1:
+up = grid[i -1][j]
+down = g[i + 1][j]
+leeft to right 
+if j > 0 and j < cols - 1
+left = g[i][j-1]
+right = g[i][j + 1]
+
+topleft_daigonal to bottom_right_dai
+
+if i > 0 and j > 0 and i < rows - 1 and j < cols - 1
+topleft_dai = g[i -1][j -1]
+bottomright = g[i + 1][j + 1]
+
+topright and bottomleft
+if i > 0 and j < cols - 1 and i < rows - 1 and j > 0
+BLD = g[i + 1][j - 1]
+BRD = g[i - 1][j + 1]
+"""
+
+def Valid_moves(grid):
+    num_of_valid_move = 0
+    visited = set()
+    
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            if explore_grid_moves(grid, row, col, visited):
+                num_of_valid_move += 1
+    return num_of_valid_move
+
+
+def explore_grid_moves(grid, row, col, visited):
+    
+    keys = (row, col)
+    if keys in visited:
+        return False
+    visited.add(keys)
+    
+    RolBounce = 0 <= row < len(grid)
+    ColBounce = 0 <= col < len(grid[0])
+    
+    if not RolBounce or not ColBounce:
+        return False
+    
+    if row > 0 and col < len(grid[0]) - 1 and row < len(grid) - 1 and col > 0:
+        if grid[row][col] >= grid[row - 1][col + 1] and grid[0][0] >= grid[row - 1][col + 1]:
+            return False
+    if col > 0 and row < len(grid[0]) - 1 and col < len(grid[0]) - 1:
+        if grid[row][col] >= grid[row][col + 1] and grid[0][0] >= grid[row][col + 1]:
+            return False
+    if row > 0 and col > 0 and row < len(grid) - 1 and col < len(grid[0]) - 1:
+        if grid[row][col] >= grid[row + 1][col + 1] and grid[0][0] > grid[row + 1][col + 1]:
+            return False
+    
+    explore_grid_moves(grid, row - 1, col, visited)
+    explore_grid_moves(grid, row, col + 1, visited)
+    explore_grid_moves(grid, row + 1, col + 1,visited)
+    
+    return True
+
+grid = [
+    [2, 4, 3, 5],
+    [5, 4, 9, 3],
+    [3, 4, 2, 11],
+    [10, 19, 13, 15]
+]
+
+grid2= [
+    [3, 2, 4],
+    [2, 1, 9],
+    [1, 1, 7]
+]
+response = Valid_moves(grid)
+response2 = Valid_moves(grid2)
+print(response)
+print(response2)
+def DungeonGame(game_state):
+    player_life = 0
+    visited_dungeon = set()
+    
+    for row in range(len(game_state)):
+        for col in range(len(game_state[0])):
+            explore_game_state(game_state, row, col, visited_dungeon)
+            
+
+def explore_game_state(game_state, row, col, visited_dungeon):
+    dungeon_coordinate = (row, col)
+    if dungeon_coordinate in visited_dungeon:
+        return 0
+    visited_dungeon.add(dungeon_coordinate)
+    
+    RowBounce = 0 <= row < len(game_state)
+    ColBounce = 0 <= col < len(game_state[0])
+    
+    if not RowBounce or ColBounce:
+        return 0
+    
+
+
+def sum_of_sub_set(arr):
+    
+    sums = 0
+    
+    for i in range(len(arr)):
+        for j in range(i, len(arr) + 1):
+            if len(arr[i:j]) < len(arr):
+                sums += sum(arr[i:j])
+    return sums
+print(sum_of_sub_set([1,2,3]))
+    
+    

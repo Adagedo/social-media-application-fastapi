@@ -1,3 +1,7 @@
 venv/
 .env
 __pycache__
+greedy.py
+index.py
+main.js
+DataStruct
