@@ -49,3 +49,27 @@ class User (AbstractBaseModel):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
+    
+    #users relationships 
+    social_links = relationship(
+        "SocialLink", back_populates="user", cascade="all, delete-orphan"
+    )
+    cover_photos = relationship(
+        "CoverPhoto", back_populates="user", cascade="all, delete-orphan"
+    )
+    profile_pictures = relationship(
+        "ProfilePicture", back_populates="user", cascade="all, delete-orphan"
+    )
+    posts = relationship("Post", back_populates="user", cascade="all, delete-orphan")
+    comments = relationship(
+        "PostComment", back_populates="user", cascade="all, delete-orphan"
+    )
+    access_tokens = relationship(
+        "AccessToken", back_populates="user", cascade="all, delete-orphan"
+    )
+    notifications = relationship(
+        "Notification", back_populates="user", cascade="all, delete-orphan"
+    )
+    
+    def __str__(self)-> str:
+        return self.username
