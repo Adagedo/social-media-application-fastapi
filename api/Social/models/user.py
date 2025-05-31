@@ -26,3 +26,9 @@ followers_table = Table(
     Column("follower_id", String, ForeignKey("user.id"), primary_key=True),
     Column("followed_id", String, ForeignKey("user.id"), primary_key=True),
 )
+
+
+class User (AbstractBaseModel):
+    
+    __tablename__ = "user"
+    
