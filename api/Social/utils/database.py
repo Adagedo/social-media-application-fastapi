@@ -13,6 +13,5 @@ Base = declarative_base()
 engine = create_engine(connection_url)
 sessionLocals = sessionmaker(autoflush=False, bind=engine)
 
-#"mysql+pymysql://root:adagedo%40%23%24%251234@localhost:3306/fastapi")
 
 
