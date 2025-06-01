@@ -31,7 +31,6 @@ followers_table = Table(
 class User (AbstractBaseModel):
     
     __tablename__ = "user"
-    
     username: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(1024), nullable=False)

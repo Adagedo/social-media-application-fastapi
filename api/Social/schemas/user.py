@@ -5,7 +5,7 @@ from api.Social.schemas.profile_picture import ProfilePictureSchema
 
 
 class User(BaseModel):
-    
+    id:str
     username:str = Field(max_length=255)
     email:EmailStr
     role:Literal["user", "admin"] = "user"

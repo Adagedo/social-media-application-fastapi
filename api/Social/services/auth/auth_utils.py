@@ -52,3 +52,9 @@ class UserAuthenticationService():
         credential_exceptions = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not authenticated", headers={"www-Authenticate":"Bearer"})
         
         user_id = self.verify_access_token(token, credential_exceptions=credential_exceptions)
+        try:
+            user = db.query(User).filter(User.id == user_id).first()
+        except Exception as e:
+            return f"database exception, {e}"
+        return user
+        
