@@ -7,6 +7,7 @@ from sqlalchemy import (
     ForeignKey,
     String,
     Table,
+    Integer,
     func,
     Enum as SQLAlchemyEnum,
 )
@@ -31,7 +32,7 @@ followers_table = Table(
 class User (AbstractBaseModel):
     
     __tablename__ = "user"
-    
+
     id:Mapped[int] = mapped_column(Integer, nullable=False)
     username: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
