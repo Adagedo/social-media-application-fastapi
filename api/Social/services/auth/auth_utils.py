@@ -35,7 +35,7 @@ class UserAuthenticationService():
         return token_data
     
     @staticmethod
-    def GetCookie(request:Request)-> str:
+    def getCookieToken(request:Request)-> str:
         
         try:
             token = request.get(settings.cookie_name)
