@@ -42,7 +42,7 @@ async def GetCookie(request:Request):
 def get_current_user(token:str=Depends(GetCookie), db:Session=Depends(get_db)):
     credential_exceptions = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="not authenticated!!!",headers={"www-Authenticate":"Bearer"})
     user_id =  verify_access_token(token, credential_exceptions)
-    user = db.query(model.User).filter(model.User._id == user_id).first()
+    user = db.query(model.User).filter(model.User.id == user_id).first()
     return user
     
 
