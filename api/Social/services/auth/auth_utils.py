@@ -4,7 +4,8 @@ from fastapi import Depends ,HTTPException, status, Request
 from sqlalchemy.orm import Session
 from api.Social.utils.config import settings
 from api.Social.schemas.token import Token
-
+from api.Social.schemas.user import User
+from api.Social.utils.dependecies import get_db
 
 class UserAuthenticationService():
     
