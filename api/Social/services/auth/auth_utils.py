@@ -37,9 +37,9 @@ class UserAuthenticationService():
     def GetCookie(self, request:Request)-> str:
         
         try:
-            cookie = request.get(settings.cookie_name)
+            token = request.get(settings.cookie_name)
         
         except Exception as ee:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid user")
-        return cookie
+        return token
             
