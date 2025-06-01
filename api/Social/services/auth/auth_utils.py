@@ -3,6 +3,7 @@ from datetime import datatime, timedelta
 from fastapi import Depends ,HTTPException, status, Request
 from sqlalchemy.orm import Session
 from api.Social.utils.config import settings
+from api.Social.schemas.token import Token
 
 
 class UserAuthenticationService():
@@ -27,7 +28,7 @@ class UserAuthenticationService():
             _id:str = payload.get("user_id")
             if not _id:
                 raise credential_exceptions
-            token_data = _id
+            token_data = Token._id = _id
         except JWTError as jwterror:
             raise credential_exceptions
         
