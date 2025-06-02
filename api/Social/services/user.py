@@ -255,10 +255,30 @@ class UserService(UserAuthenticationService):
             
         users = query.all()
         
-        return jsonable_encoders(users, exclude={"password"})
+        return jsonable_encoder(users, exclude={"password"})
             
+    
+    def follow_user(self, db:Session, user_id:str, user:user_model.User, background_task:BackGroundTask):
         
+        followee = db.query(user_model.User).filter(user_model.User.id == user_id).first()
         
+        if not followee:
+            raise HTTPException(
+                
+                status_code=status.HTTP_404_NOT_FOUND, 
+                detail="user not found"
+            )
+        
+        if followee not in user.followings:
+            user.followings.append(followee)
+            
+            notification = notification_model.Notification(
+                user_id = followee.id, message = f"{user.username} followed you"
+            )
+            db.add(notification)
+            db.commit()
+
+            background_task.add_task(notification_service.user_event_queues[notification.user_id].put, notification.message)
         
         
         
