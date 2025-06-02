@@ -305,3 +305,11 @@ class UserService(UserAuthenticationService):
         
         background_task.add_task(notification_service.user_event_queues[notification.user_id].put, notification.message)
         
+        
+    def followers(self, db: Session, user: user_model.User):
+
+        followers = [
+            UserResponse(**jsonable_encoder(follower)) for follower in user.followers
+        ]
+
+        return followers
