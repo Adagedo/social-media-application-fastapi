@@ -299,3 +299,9 @@ class UserService(UserAuthenticationService):
         notification = notification_model.Notification(
             user_id=user_to_unfollow.id, message=f"{user.username} unfollowed you"
         )
+        
+        db.add(notification)
+        db.commit()
+        
+        background_task.add_task(notification_service.user_event_queues[notification.user_id].put, notification.message)
+        
