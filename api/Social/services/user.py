@@ -18,6 +18,7 @@ from api.Social.services.auth.authentication_service import UserAuthenticationSe
 from api.Social.utils.config import settings
 from datetime import datetime, timedelta, timezone
 from api.Social.models.cover_photo import CoverPhoto
+from api.Social.models.social_links import SocialLink
 from fastapi.encoders import jsonable_encoder
 
 class UserService(UserAuthenticationService):
@@ -188,7 +189,53 @@ class UserService(UserAuthenticationService):
             db.add(new_cover_photo)
             db.commit()
             db.refresh(new_cover_photo)
+        
+        social_links = data.pop("social_link", [])
+        if social_links:
             
+            #removed all associated social links 
+            db.query(SocialLink).filter(SocialLink.id == user.id).delete()
+            db.flush()
+            
+            #create new links
+            
+            for link in social_links:
+                social_link = SocialLink(link=link, user_id = user.id)
+                
+                db.add(social_link)
+                
+            db.commit()
+        
+        for key, value in data.items():
+            
+            setattr(user, key, value)
+            
+        db.commit()
+        db.refresh(user)
+        
+        notification = notification_model.Notification(
+            user_id = user.id , message="Account updated successfully"
+        )
+        
+        db.add(notification)
+        db.commit()
+        
+        return jsonable_encoder(
+            self.get_user_detail(db=db, user_id=user_id, exclude={"password"})
+        )
+    
+    def delete_user_profile(self, db:Session, user:user_model.User, user_id:str):
+        
+        if user.id != user_id:
+            raise HTTPException(
+                status_code = status.HTTP_403_FORBIDDEN, 
+                detail="invalid action"
+            )
+        
+        db.delete(user)
+        db.commit()
+        
+    
             
         
         
