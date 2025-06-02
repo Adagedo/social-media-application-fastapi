@@ -1,0 +1,198 @@
+from fastapi import Depends, HTTPException, Response, status
+from api.Social.schemas.user import (
+    User as UserSchema, 
+    UserCreateResponse, 
+    UserLoginSchema, 
+    UserResponse, 
+    UserUpdateSchema, 
+    UserLoginS, 
+    CreateUserSchema
+)
+from api.Social.models.profile_picture import ProfilePicture
+import api.Social.models.notification as notification_model
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import or_, text
+from api.Social.services.auth.utils import hashedPassword, verify_password
+import api.Social.models.user as user_model 
+from api.Social.services.auth.authentication_service import UserAuthenticationService
+from api.Social.utils.config import settings
+from datetime import datetime, timedelta, timezone
+from api.Social.models.cover_photo import CoverPhoto
+from fastapi.encoders import jsonable_encoder
+
+class UserService(UserAuthenticationService):
+
+    
+    def create_user(self, user:CreateUserSchema, db:Session):
+        try:
+            
+            if self.exists(user.email, db):
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="user with email already exists")
+            
+            hashedPassword = hashedPassword(user.password)
+            user.password = hashedPassword
+            user = user_model.User(**user.model_dump())
+            
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            
+            notification = notification_model.Notification(
+                user_id=user.id, message="Account created successfully"
+            )
+            
+            db.add(notification)
+            db.commit()
+            
+            token_data = {
+                "user":user.username,
+                "role": user.role,
+                "id": user.id
+            }
+        except Exception as e: raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
+        
+    
+    def exists(self, email:str, db:Session) -> bool:
+        try:
+            
+            user = db.query(user_model.User).filter(user_model.User.email == email).first()
+            if not user:
+                return False
+            
+            return True
+        except Exception as e: raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
+    
+    def get_user_by_email(self, email:str, db:Session) -> user_model.User | None:
+        
+        try:
+            user = db.query(user_model.User).filter(user_model.User.email == email).first()
+            if not user:
+                raise HTTPException(
+                    status_code = status.HTTP_404_NOT_FOUND, detail=f"user with the email does not exist"
+                )
+        
+        except Exception as e: raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"server error {e}"
+        )
+        
+        return user
+    
+    def handel_user_login(self, userLogin:UserLoginS, db:Session, response:Response):
+        
+        user = db.query(user_model.User).filter(user_model.User.email == userLogin.email).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="invalid credentials"
+            )
+        
+        is_valid_password = verify_password(userLogin.password, user.password)
+        
+        if not is_valid_password:
+            raise HTTPException(
+                status_code = status.HTTP_404_NOT_FOUND, detail="invalid credentials"
+            )
+            
+        token_payload = {
+            "email":user.email, 
+            "role": user.role, 
+        }
+        access_token:str = self.generate_access_token(token_payload)
+        response.set_cookie(
+            key=settings.cookie_key, value=access_token, expires=settings.access_token_expires_minutes, 
+            secure=True, httponly=True, samesite="strict"
+        )
+        
+        user.last_login = datetime.now(timezone.utc)
+        db.commit()
+        db.refresh(user)
+        
+        notification = notification_model.Notification(
+            user_id=user.id, message="Account login successful"
+        )
+        
+        client_user_response = jsonable_encoder(
+            self.get_user_details(db=db, user_id = user.id), exclude={"password"}
+        )
+        
+        response = {
+            "user":client_user_response
+        }
+        
+        return response
+        
+    
+    def get_user_details(self, db:Session, user_id):
+        query = (
+            db.query(user_model.User)
+            .options(
+                joinedload(user_model.User.profile_pictures),
+                joinedload(user_model.User.cover_photos),
+                joinedload(user_model.User.followers),
+                joinedload(user_model.User.social_links),
+                joinedload(user_model.User.username),
+                joinedload(user_model.User.bio),
+                joinedload(user_model.User.followings),
+                joinedload(user_model.User.posts),
+                joinedload(user_model.User.email),
+                joinedload(user_model.User.notifications)
+            ).filter(user_model.User.id == user_id).first()
+        )
+        
+        if not query:
+            raise HTTPException(
+                status_code = status.HTTP_404_NOT_FOUND, detail="user not found"
+            )
+        
+        return query
+        # generate notification
+        
+    
+    def update_user_profile(self, user:user_model.User, schema:UserUpdateSchema, user_id:str, db:Session):
+        
+        if user.id != user_id:
+            raise HTTPException(
+                status_code = status.HTTP_403_FORBIDDEN, detail="invalid action"
+            )
+        
+        data = schema.model_dump(exclude_unset=True)
+        
+        profile_picture = data.pop("profile_picture", None)
+        
+        if profile_picture:
+            
+            #upload image to cloudinary
+            # yet to implement thi method
+            image_url = upload(profile_picture)
+            
+            #create a new profile picture 
+            new_profile_picture = ProfilePicture(
+                user_id=user.id, image=image_url
+            )
+            
+            db.add(new_profile_picture)
+            db.commit()
+            db.refresh(new_profile_picture)
+            
+        cover_photo = data.pop("cover_photo", None)
+        
+        if cover_photo:
+            
+            #upload image to cloudinary
+            image_url = upload(cover_photo)
+            
+            #create a new profile picture 
+            new_cover_photo = CoverPhoto(
+                user_id=user.id, image=image_url
+            )
+            
+            db.add(new_cover_photo)
+            db.commit()
+            db.refresh(new_cover_photo)
+            
+            
+        
+        
+        
+        
+        
+        
