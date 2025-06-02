@@ -313,3 +313,12 @@ class UserService(UserAuthenticationService):
         ]
 
         return followers
+    
+    
+    def followings(self, db: Session, user: user_model.User):
+
+        followings = [
+            UserResponse(**jsonable_encoder(following)) for following in user.followings
+        ]
+
+        return followings
