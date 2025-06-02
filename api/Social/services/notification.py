@@ -24,4 +24,11 @@ class NotificationService():
             yield f"data: {event}"
             
     
+    def notification(self, user:User, db:Session):
+        
+        notifications = (
+            db.query(Notification).filter(Notification.user_id == user.id).all()
+        )
+        
+        return notifications
         
