@@ -20,6 +20,7 @@ from datetime import datetime, timedelta, timezone
 from api.Social.models.cover_photo import CoverPhoto
 from api.Social.models.social_links import SocialLink
 from fastapi.encoders import jsonable_encoder
+from api.Social.services.notification import notification_service
 
 class UserService(UserAuthenticationService):
 
