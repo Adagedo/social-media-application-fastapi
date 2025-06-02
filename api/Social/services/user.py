@@ -236,6 +236,26 @@ class UserService(UserAuthenticationService):
         db.commit()
         
     
+    def fetch_all(self, db:Session, search:str=""):
+
+        query = (db.query(user_model.User).
+                 options(
+                    joinedload(user_model.User.profile_picture),
+                    joinedload(user_model.User.social_links) 
+                ).order_by(text("RANDOM()"))
+            )
+        
+        if search:
+            query = query.filter(
+                or_(
+                    user_model.User.username.icontains(f"%{search}%"),
+                    user_model.icontain(f"%{search}%")
+                )
+            )
+            
+        users = query.all()
+        
+        return jsonable_encoders(users, exclude={"password"})
             
         
         
