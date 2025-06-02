@@ -322,3 +322,6 @@ class UserService(UserAuthenticationService):
         ]
 
         return followings
+
+
+user_service = UserService()
