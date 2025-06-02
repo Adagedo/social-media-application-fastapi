@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, Response, status
+from fastapi import Depends, HTTPException, Response, status, BackgroundTasks
 from api.Social.schemas.user import (
     User as UserSchema, 
     UserCreateResponse, 
@@ -258,7 +258,7 @@ class UserService(UserAuthenticationService):
         return jsonable_encoder(users, exclude={"password"})
             
     
-    def follow_user(self, db:Session, user_id:str, user:user_model.User, background_task:BackGroundTask):
+    def follow_user(self, db:Session, user_id:str, user:user_model.User, background_task:BackgroundTasks):
         
         followee = db.query(user_model.User).filter(user_model.User.id == user_id).first()
         
@@ -281,7 +281,7 @@ class UserService(UserAuthenticationService):
             background_task.add_task(notification_service.user_event_queues[notification.user_id].put, notification.message)
         
         
-    def unfollow_user(self, db:Session, user_id:str, user:user_model.User, background_task:BackGroundTask):
+    def unfollow_user(self, db:Session, user_id:str, user:user_model.User, background_task:BackgroundTasks):
         
         user_to_unfollow = db.query(user_model.User).filter(user_model.User.id == user_id).first()
         
