@@ -31,4 +31,6 @@ class NotificationService():
         )
         
         return notifications
-        
+    
+    
+notification_service = NotificationService()
