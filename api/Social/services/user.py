@@ -281,5 +281,21 @@ class UserService(UserAuthenticationService):
             background_task.add_task(notification_service.user_event_queues[notification.user_id].put, notification.message)
         
         
+    def unfollow_user(self, db:Session, user_id:str, user:user_model.User, background_task:BackGroundTask):
         
+        user_to_unfollow = db.query(user_model.User).filter(user_model.User.id == user_id).first()
         
+        if not user_to_unfollow:
+            
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if user_to_unfollow not in user.followings:
+            raise HTTPException(
+                status_code=404, detail="You are not following this user"
+            )
+        
+        user.followings.remove(user_to_unfollow)
+        
+        notification = notification_model.Notification(
+            user_id=user_to_unfollow.id, message=f"{user.username} unfollowed you"
+        )
