@@ -114,6 +114,10 @@ class UserService(UserAuthenticationService):
             user_id=user.id, message="Account login successful"
         )
         
+        db.add(notification)
+        db.commit()
+        db.refresh(notification)
+        
         client_user_response = jsonable_encoder(
             self.get_user_details(db=db, user_id = user.id), exclude={"password"}
         )
