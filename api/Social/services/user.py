@@ -95,7 +95,9 @@ class UserService(UserAuthenticationService):
             )
             
         token_payload = {
-            "email":user.email, 
+            "email":user.email,
+            "username":user.username,
+            "user_id":user.id,
             "role": user.role, 
         }
         access_token:str = self.generate_access_token(token_payload)
