@@ -98,7 +98,7 @@ class UserService(UserAuthenticationService):
             "email":user.email,
             "username":user.username,
             "user_id":user.id,
-            "role": user.role, 
+            "role": user.role
         }
         access_token:str = self.generate_access_token(token_payload)
         response.set_cookie(
