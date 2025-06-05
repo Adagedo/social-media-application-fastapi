@@ -8,7 +8,7 @@ from api.Social.routers.users import users_router
 from api.Social.routers.posts import posts_router
 from api.Social.routers.notification import notifications_router
 
-model.Base.metadata.create_all(bind=engine)
+model.Base.metadata.create_all(bind=engine) 
 
 app = FastAPI()
 
@@ -20,7 +20,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-
+app.include_router(auth_router)
+app.include_router(posts_router)
+app.include_router(users_router)
+app.include_router(notifications_router)
+app.include_router(comment_router)
 
 
 @app.get("/")
