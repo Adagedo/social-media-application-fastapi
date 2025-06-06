@@ -23,6 +23,9 @@ from fastapi.encoders import jsonable_encoder
 from api.Social.services.notification import notification_service
 
 class UserService(UserAuthenticationService):
+    
+    def __init__(self):
+        self.serverError = "server error checkback in few moments"
 
     
     def create_user(self, user:CreateUserSchema, db:Session):
@@ -51,7 +54,7 @@ class UserService(UserAuthenticationService):
                 "role": user.role,
                 "id": user.id
             }
-        except Exception as e: raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
+        except Exception as e: raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{self.serverError}")
         
     
     def exists(self, email:str, db:Session) -> bool:
@@ -62,7 +65,7 @@ class UserService(UserAuthenticationService):
                 return False
             
             return True
-        except Exception as e: raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
+        except Exception as e: raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{self.serverError}")
     
     def get_user_by_email(self, email:str, db:Session) -> user_model.User | None:
         
@@ -74,7 +77,7 @@ class UserService(UserAuthenticationService):
                 )
         
         except Exception as e: raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"server error {e}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"server error {self.serverError}"
         )
         
         return user
