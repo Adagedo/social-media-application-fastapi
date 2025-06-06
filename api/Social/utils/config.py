@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     secrete_key:str
     algorithm:str
     access_token_expires_minutes:int
+    cookie_name:str
+    drivername:str
     
     class Config:
         env_file = "...env"
