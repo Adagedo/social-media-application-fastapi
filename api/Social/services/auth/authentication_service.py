@@ -40,10 +40,13 @@ class UserAuthenticationService():
         
         try:
             token = request.get(settings.cookie_name)
-        
+            if not token:
+                raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail="invalid user")
+            return token
         except Exception as ee:
+            print(ee)
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid user")
-        return token
+        
     
 
     def get_current_user_validation(self, token:str=Depends(getCookieToken), db:Session=Depends(get_db)):
