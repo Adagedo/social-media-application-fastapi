@@ -30,7 +30,7 @@ class UserAuthenticationService():
             if not _id:
                 raise credential_exceptions
             token_data = Token._id = _id
-        except JWTError as jwterror:
+        except JWTError:
             raise credential_exceptions
         
         return token_data
@@ -45,8 +45,7 @@ class UserAuthenticationService():
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid user")
         return token
     
-    
-    
+
     def get_current_user_validation(self, token:str=Depends(getCookieToken), db:Session=Depends(get_db)):
         
         credential_exceptions = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not authenticated", headers={"www-Authenticate":"Bearer"})
