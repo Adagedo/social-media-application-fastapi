@@ -49,6 +49,6 @@
 - Create a new Pull Request
 
 ## Contact
-Have questions? Reach out at [adagedosolomon52@email.com].
+Have questions? Reach out at adagedosolomon52@email.com
 
 
