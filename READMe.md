@@ -16,3 +16,39 @@
 - Pytest-based test suite
 - mySQL with SQLAlchemy ORM
 - Alembic for DB migrations
+
+
+##  Installation
+- clone `https://github.com/Adagedo/social-media-application-fastapi.git`
+- cd to fastapi
+
+## install dependencies
+
+- `python -m venv venv`
+- `source venv/bin/activate`
+- `pip install -r requirements.txt`
+
+## Run Migrations
+- `alembic upgrade head`
+
+## Run The App
+- `uvicorn main:app --reload`
+- Visit `http://localhost:8000/docs` for Swagger UI.
+
+## Run test
+- `pytest tests/`
+
+## Docker setup
+- `docker-compose up --build`
+
+## Contributing
+- Fork the repo
+- Create your feature branch: git checkout -b your branch-name
+- Commit your changes: git commit -m "your commit"
+- Push to the branch: git push origin your branch name
+- Create a new Pull Request
+
+## Contact
+Have questions? Reach out at [adagedosolomon52@email.com].
+
+
